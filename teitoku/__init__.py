@@ -1,0 +1,1 @@
+from teitoku.teitoku import Teitoku
