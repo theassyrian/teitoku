@@ -29,14 +29,8 @@ class LineGateway(Gateway):
 
         @self.app.route("/{}".format(webhook_suffix), methods=['POST', 'GET'])
         def webhook_callback():
-            # get X-Line-Signature header value
             signature = request.headers['X-Line-Signature']
-
-            # get request body as text
             body = request.get_data(as_text=True)
-            self.app.logger.info("Request body: " + body)
-
-            # handle webhook body
             try:
                 self.webhook_handler.handle(body, signature)
             except InvalidSignatureError:
