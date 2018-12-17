@@ -1,0 +1,1 @@
+from teitoku.message.base_message import Message

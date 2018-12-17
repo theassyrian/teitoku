@@ -1,4 +1,5 @@
 from teitoku.dispatcher import RequestDispatcher
+from teitoku.dispatcher import ResponseDispatcher
 
 
 class RequestHandler:
@@ -15,10 +16,10 @@ class RequestHandler:
         dispatcher.register_handler(request_handler)
 
     def check_applicable(self, message):
-        pass
+        return message.content == self.command
 
     def execute(self, req, res):
-        return self.handler(req, res)
-
-    def callback_done(self):
-        pass
+        self.handler(req, res)
+        dispatcher = ResponseDispatcher.load()
+        dispatcher.parse_response(res)
+        return

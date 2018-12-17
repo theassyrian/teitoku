@@ -1,5 +1,7 @@
 from teitoku import Teitoku
 from teitoku.dispatcher import RequestDispatcher
+from teitoku.message import Message
+from time import sleep
 
 
 app = Teitoku(__name__)
@@ -7,10 +9,15 @@ app = Teitoku(__name__)
 
 @app.command("test command")
 def handle(req, res):
-    return "hello world"
+    print(req.message.content)
+    res.message.content = "Command succeed : test command"
 
 
 dispatcher = RequestDispatcher.load()
 print(dispatcher.handlers)
 
-print(dispatcher.handlers["test command"].execute(None, None))
+message = Message()
+message.content = "test command"
+
+dispatcher.dispatch(message)
+sleep(5)
