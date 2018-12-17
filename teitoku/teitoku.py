@@ -1,5 +1,6 @@
 from threading import Thread
 from teitoku.handler import RequestHandler
+from time import sleep
 
 
 class Teitoku:

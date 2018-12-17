@@ -2,9 +2,11 @@ from teitoku import Teitoku
 from teitoku.dispatcher import RequestDispatcher
 from teitoku.message import Message
 from time import sleep
+from teitoku.gateway import LineGateway
 
 
 app = Teitoku(__name__)
+app.register_gateway(LineGateway("token", "secret"))
 
 
 @app.command("test command")
@@ -13,11 +15,4 @@ def handle(req, res):
     res.message.content = "Command succeed : test command"
 
 
-dispatcher = RequestDispatcher.load()
-print(dispatcher.handlers)
-
-message = Message()
-message.content = "test command"
-
-dispatcher.dispatch(message)
-sleep(5)
+app.run()
