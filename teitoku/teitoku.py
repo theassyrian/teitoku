@@ -15,6 +15,14 @@ class Teitoku:
 
         return register_handler
 
+    def register_gateway(self, gateway):
+        self.gateways.append(gateway)
+
     def run(self):
+        print("run teitoku")
         for gateway in self.gateways:
-            self.gateway_threads.append(Thread(target=gateway.listen))
+            self.gateway_threads.append(
+                Thread(target=gateway.run, name=gateway.__class__.__name__))
+
+        for thread in self.gateway_threads:
+            thread.start()
