@@ -9,7 +9,9 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
 
-from .base_gateway import Gateway
+from teitoku.gateway.base_gateway import Gateway
+from teitoku.parser.line_parser import LineParser
+from teitoku.dispatcher.request_dispatcher import RequestDispatcher
 
 
 class LineGateway(Gateway):
@@ -40,7 +42,10 @@ class LineGateway(Gateway):
 
         @self.webhook_handler.add(MessageEvent)
         def handle_message(event):
-            print(event)
+            message = LineParser.parse(event)
+            if message is not None:
+                dispatcher = RequestDispatcher.load()
+                dispatcher.dispatch(message)
 
     def run(self):
         print("Started line webhook on http://{}:{}/{}".format(

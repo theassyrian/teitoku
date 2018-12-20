@@ -20,6 +20,7 @@ class RequestHandler:
 
     def execute(self, req, res):
         self.handler(req, res)
+        res.message.from_gateway = req.message.from_gateway
         dispatcher = ResponseDispatcher.load()
         dispatcher.parse_response(res)
         return
