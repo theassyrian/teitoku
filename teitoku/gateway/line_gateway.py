@@ -1,6 +1,7 @@
-from flask import Flask, request, abort
+import bottle
+
 from linebot import (
-    LineBotApi, WebhookHandler
+    LineBotApi, WebhookHandler, WebhookParser
 )
 from linebot.exceptions import (
     InvalidSignatureError
@@ -26,29 +27,33 @@ class LineGateway(Gateway):
 
         self.line_bot_api = LineBotApi(self.channel_access_token)
         self.webhook_handler = WebhookHandler(self.channel_secret)
+        self.parser = WebhookParser(self.channel_secret)
 
-        self.app = Flask("line_gateway")
+        @bottle.route('/')
+        def landing():
+            return "Running"
 
-        @self.app.route("/{}".format(webhook_suffix), methods=['POST', 'GET'])
+        @bottle.post("/{}".format(webhook_suffix))
         def webhook_callback():
-            signature = request.headers['X-Line-Signature']
-            body = request.get_data(as_text=True)
+            signature = bottle.request.headers['X-Line-Signature']
+            body = bottle.request.body.getvalue().decode('utf-8')
+            print('%s' % signature)
             try:
-                self.webhook_handler.handle(body, signature)
-            except InvalidSignatureError:
-                abort(400)
+                events = self.parser.parse(body, signature)
+                for event in events:
+                    message = LineParser.parse(event)
+                    print(message)
+                    if message is not None:
+                        dispatcher = RequestDispatcher.load()
+                        dispatcher.dispatch(message)
+            except InvalidSignatureError as e:
+                print(e)
+                bottle.abort(400)
 
             return 'OK'
-
-        @self.webhook_handler.add(MessageEvent)
-        def handle_message(event):
-            message = LineParser.parse(event)
-            if message is not None:
-                dispatcher = RequestDispatcher.load()
-                dispatcher.dispatch(message)
 
     def run(self):
         print("Started line webhook on http://{}:{}/{}".format(
               self.host, self.port, self.webhook_suffix))
 
-        self.app.run(self.host, self.port, debug=False)
+        bottle.run(host=self.host, port=self.port, debug=True)
