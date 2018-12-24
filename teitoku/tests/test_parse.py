@@ -16,7 +16,7 @@ def test_parse_text_message_source_user():
 
 
     parsed_request = LineParser.parse(message_event)
-    parsed_message = parsed_request.raw_message
+    parsed_message = parsed_request.message
 
     assert parsed_request.timestamp == timestamp
     assert parsed_message.content == "test"
@@ -34,7 +34,7 @@ def test_parse_text_message_source_group():
         timestamp.timestamp() * 1000, source, "reply_token", text_message)
 
     parsed_request = LineParser.parse(message_event)
-    parsed_message = parsed_request.raw_message
+    parsed_message = parsed_request.message
 
     assert parsed_request.timestamp == timestamp
     assert parsed_message.content == "test"
@@ -54,7 +54,7 @@ def test_parse_text_message_source_room():
         timestamp.timestamp() * 1000, source, "reply_token", text_message)
 
     parsed_request = LineParser.parse(message_event)
-    parsed_message = parsed_request.raw_message
+    parsed_message = parsed_request.message
 
     assert parsed_request.timestamp == timestamp
     assert parsed_message.content == "test"

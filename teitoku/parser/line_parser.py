@@ -12,16 +12,16 @@ import linebot.models as line
 class LineParser(BaseParser):
     @staticmethod
     def parse(event: line.Event) -> Request:
-        raw_message = None
+        message = None
         if event.message.type == 'text':
-            raw_message =  LineParser.parse_text(event)
+            message =  LineParser.parse_text(event)
         elif event.message.type == 'image':
-            raw_message = LineParser.parse_image(event)
+            message = LineParser.parse_image(event)
         else:
             return None
 
         timestamp = datetime.datetime.fromtimestamp(event.timestamp / 1000)
-        return Request(raw_message, timestamp)
+        return Request(message, timestamp)
 
 
     @staticmethod

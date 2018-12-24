@@ -17,13 +17,11 @@ class RequestDispatcher:
 
         return cls.instance
 
-    def dispatch(self, message):
-        handler = self.lookup_handler(message)
+    def dispatch(self, request):
+        handler = self.lookup_handler(request)
         if handler is None:
             return
 
-        request = Request.parse(handler.command)
-        request.message = message
         response = Response()
         thread = Thread(target=handler.execute, args=[request, response, ])
         thread.start()

@@ -4,8 +4,8 @@ from teitoku.message import Message
 
 
 class Request:
-    def __init__(self, raw_message: Message = None, timestamp: datetime = None):
-        self.raw_message = raw_message
+    def __init__(self, message: Message = None, timestamp: datetime = None):
+        self.message = message
         self.timestamp = timestamp
 
     @classmethod
