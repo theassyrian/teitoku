@@ -2,6 +2,7 @@ import linebot.models as models
 
 from teitoku.parser.line_parser import LineParser
 from teitoku.message.text_message import TextMessage
+from teitoku.source import SourceUser, SourceGroup, SourceRoom
 
 
 def test_parse_text_message_source_user():
@@ -10,17 +11,13 @@ def test_parse_text_message_source_user():
     message_event = models.MessageEvent(
         None, source, "reply_token", text_message)
 
-    parsed_message = LineParser.parse(message_event)  # type: TextMessage
+    parsed_message = LineParser.parse(message_event)
 
     assert parsed_message.content == "test"
     assert parsed_message.content_type == "text"
-    assert parsed_message.from_gateway == "line"
-    assert parsed_message.sender_type == "user"
-    assert parsed_message.sender == {
-        'user_id': "user1",
-        'group_id': None,
-        'room_id': None
-    }
+    assert parsed_message.gateway == "line"
+    assert isinstance(parsed_message.source, SourceUser)
+    assert parsed_message.source.user_id == 'user1'
 
 
 def test_parse_text_message_source_group():
@@ -29,17 +26,14 @@ def test_parse_text_message_source_group():
     message_event = models.MessageEvent(
         None, source, "reply_token", text_message)
 
-    parsed_message = LineParser.parse(message_event)  # type: TextMessage
+    parsed_message = LineParser.parse(message_event)
 
     assert parsed_message.content == "test"
     assert parsed_message.content_type == "text"
-    assert parsed_message.from_gateway == "line"
-    assert parsed_message.sender_type == "group"
-    assert parsed_message.sender == {
-        'user_id': "user1",
-        'group_id': "group1",
-        'room_id': None
-    }
+    assert parsed_message.gateway == "line"
+    assert isinstance(parsed_message.source, SourceGroup)
+    assert parsed_message.source.user_id == 'user1'
+    assert parsed_message.source.group_id == 'group1'
 
 
 def test_parse_text_message_source_room():
@@ -48,14 +42,11 @@ def test_parse_text_message_source_room():
     message_event = models.MessageEvent(
         None, source, "reply_token", text_message)
 
-    parsed_message = LineParser.parse(message_event)  # type: TextMessage
+    parsed_message = LineParser.parse(message_event)
 
     assert parsed_message.content == "test"
     assert parsed_message.content_type == "text"
-    assert parsed_message.from_gateway == "line"
-    assert parsed_message.sender_type == "room"
-    assert parsed_message.sender == {
-        'user_id': "user1",
-        'group_id': None,
-        'room_id': "room1"
-    }
+    assert parsed_message.gateway == "line"
+    assert isinstance(parsed_message.source, SourceRoom)
+    assert parsed_message.source.user_id == 'user1'
+    assert parsed_message.source.room_id == 'room1'
