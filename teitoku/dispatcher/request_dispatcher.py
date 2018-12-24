@@ -19,6 +19,9 @@ class RequestDispatcher:
 
     def dispatch(self, message):
         handler = self.lookup_handler(message)
+        if handler is None:
+            return
+
         request = Request.parse(handler.command)
         request.message = message
         response = Response()
