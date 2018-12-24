@@ -34,8 +34,8 @@ class LineParser(BaseParser):
         }
 
         if message.source.type == 'group':
-            source['group_id'] = message.source.groupId
+            source['group_id'] = message.source.group_id
         elif message.source.type == 'room':
-            source['room_id'] = message.source.roomId
+            source['room_id'] = message.source.room_id
 
         return source
