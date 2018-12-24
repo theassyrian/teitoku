@@ -6,9 +6,6 @@ from linebot import (
 from linebot.exceptions import (
     InvalidSignatureError
 )
-from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
-)
 
 from teitoku.gateway.base_gateway import Gateway
 from teitoku.parser.line_parser import LineParser
@@ -17,14 +14,14 @@ from teitoku.dispatcher.request_dispatcher import RequestDispatcher
 
 class LineGateway(Gateway):
     def __init__(self, channel_access_token, channel_secret,
-                 host="localhost", port="5000", webhook_suffix="line"):
-        super().__init__()
+                 host="localhost", port="5000", webhook_suffix="line",
+                 dispatcher=RequestDispatcher.load(), message_parser=LineParser):
+        super().__init__(dispatcher=dispatcher, message_parser=message_parser)
         self.channel_access_token = channel_access_token
         self.channel_secret = channel_secret
         self.port = port
         self.webhook_suffix = webhook_suffix
         self.host = host
-
         self.line_bot_api = LineBotApi(self.channel_access_token)
         self.webhook_handler = WebhookHandler(self.channel_secret)
         self.parser = WebhookParser(self.channel_secret)
@@ -41,11 +38,10 @@ class LineGateway(Gateway):
             try:
                 events = self.parser.parse(body, signature)
                 for event in events:
-                    message = LineParser.parse(event)
+                    message = self.message_parser.parse(event)
                     print(message)
                     if message is not None:
-                        dispatcher = RequestDispatcher.load()
-                        dispatcher.dispatch(message)
+                        self.dispatcher.dispatch(message)
             except InvalidSignatureError as e:
                 print(e)
                 bottle.abort(400)
