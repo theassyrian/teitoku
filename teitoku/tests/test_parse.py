@@ -12,7 +12,7 @@ def test_parse_text_message_source_user():
     text_message = models.TextMessage("123", "test")
     source = models.SourceUser("user1")
     message_event = models.MessageEvent(
-        timestamp.timestamp(), source, "reply_token", text_message)
+        timestamp.timestamp() * 1000, source, "reply_token", text_message)
 
 
     parsed_request = LineParser.parse(message_event)
@@ -31,7 +31,7 @@ def test_parse_text_message_source_group():
     text_message = models.TextMessage("123", "test")
     source = models.SourceGroup("group1", "user1")
     message_event = models.MessageEvent(
-        timestamp.timestamp(), source, "reply_token", text_message)
+        timestamp.timestamp() * 1000, source, "reply_token", text_message)
 
     parsed_request = LineParser.parse(message_event)
     parsed_message = parsed_request.raw_message
@@ -51,7 +51,7 @@ def test_parse_text_message_source_room():
     text_message = models.TextMessage("123", "test")
     source = models.SourceRoom("room1", "user1")
     message_event = models.MessageEvent(
-        timestamp.timestamp(), source, "reply_token", text_message)
+        timestamp.timestamp() * 1000, source, "reply_token", text_message)
 
     parsed_request = LineParser.parse(message_event)
     parsed_message = parsed_request.raw_message

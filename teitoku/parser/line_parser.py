@@ -20,7 +20,7 @@ class LineParser(BaseParser):
         else:
             return None
 
-        timestamp = datetime.datetime.fromtimestamp(event.timestamp)
+        timestamp = datetime.datetime.fromtimestamp(event.timestamp / 1000)
         return Request(raw_message, timestamp)
 
 
