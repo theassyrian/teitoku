@@ -1,21 +1,28 @@
 from typing import Union
+import datetime
 
 from teitoku.parser.base_parser import BaseParser
 from teitoku.message import TextMessage
 from teitoku.source import (Source, SourceUser, SourceRoom, SourceGroup)
+from teitoku.intermediate import Request
 
 import linebot.models as line
 
 
 class LineParser(BaseParser):
     @staticmethod
-    def parse(event):
+    def parse(event: line.Event) -> Request:
+        raw_message = None
         if event.message.type == 'text':
-            return LineParser.parse_text(event)
+            raw_message =  LineParser.parse_text(event)
         elif event.message.type == 'image':
-            return LineParser.parse_image(event)
+            raw_message = LineParser.parse_image(event)
         else:
             return None
+
+        timestamp = datetime.datetime.fromtimestamp(event.timestamp)
+        return Request(raw_message, timestamp)
+
 
     @staticmethod
     def parse_text(event: line.MessageEvent) -> TextMessage:
