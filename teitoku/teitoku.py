@@ -1,5 +1,5 @@
 from threading import Thread
-from teitoku.handler import RequestHandler
+from teitoku.handler import ExactHandler
 from time import sleep
 
 
@@ -9,9 +9,9 @@ class Teitoku:
         self.gateways = []
         self.gateway_threads = []
 
-    def command(self, cmd_string):
+    def exact(self, cmd_string):
         def register_handler(handler):
-            RequestHandler.register(cmd_string, handler)
+            ExactHandler.register(cmd_string, handler)
             return handler
 
         return register_handler
