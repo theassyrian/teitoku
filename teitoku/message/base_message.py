@@ -1,10 +1,11 @@
+from teitoku.source import Source
+
 class Message:
-    def __init__(self):
-        self.content = None
-        self.content_type = None
-        self.from_gateway = None
-        self.sender = None
-        self.sender_type = None
+    def __init__(self, content=None, content_type: str = None, gateway: str = None, source: Source = None):
+        self.content = content
+        self.content_type = content_type
+        self.gateway = gateway
+        self.source = source
 
     def reply(self):
         pass

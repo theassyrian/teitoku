@@ -13,7 +13,7 @@ from teitoku.dispatcher.request_dispatcher import RequestDispatcher
 
 
 class LineGateway(Gateway):
-    def __init__(self, channel_access_token, channel_secret,
+    def __init__(self, channel_access_token:str, channel_secret:str,
                  host="localhost", port="5000", webhook_suffix="line",
                  dispatcher=RequestDispatcher.load(), message_parser=LineParser):
         super().__init__(dispatcher=dispatcher, message_parser=message_parser)

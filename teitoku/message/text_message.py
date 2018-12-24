@@ -1,11 +1,6 @@
 from teitoku.message.base_message import Message
-
+from teitoku.source import Source
 
 class TextMessage(Message):
-    def __init__(self, content, sender, sender_type, gateway):
-        super().__init__()
-        self.content = content
-        self.content_type = 'text'
-        self.from_gateway = gateway
-        self.sender = sender
-        self.sender_type = sender_type
+    def __init__(self, content:str, gateway:str, source:Source):
+        super(TextMessage, self).__init__(content, 'text', gateway, source)

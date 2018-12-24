@@ -1,5 +1,10 @@
+from typing import Union
+
 from teitoku.parser.base_parser import BaseParser
-from teitoku.message.text_message import TextMessage
+from teitoku.message import TextMessage
+from teitoku.source import (Source, SourceUser, SourceRoom, SourceGroup)
+
+import linebot.models as line
 
 
 class LineParser(BaseParser):
@@ -13,29 +18,20 @@ class LineParser(BaseParser):
             return None
 
     @staticmethod
-    def parse_text(event):
-        return TextMessage(
-            event.message.text,
-            LineParser.parse_source(event),
-            event.source.type,
-            'line'
-        )
+    def parse_text(event: line.MessageEvent) -> TextMessage:
+        return TextMessage(event.message.text, 'line', LineParser.parse_source(event.source))
 
     @staticmethod
     def parse_image(message):
         pass
 
     @staticmethod
-    def parse_source(message):
-        source = {
-            'user_id' : message.source.user_id,
-            'group_id' : None,
-            'room_id' : None
-        }
-
-        if message.source.type == 'group':
-            source['group_id'] = message.source.group_id
-        elif message.source.type == 'room':
-            source['room_id'] = message.source.room_id
-
-        return source
+    def parse_source(source: line.Source) -> Source:
+        if source.type == 'user':
+            return SourceUser(source.user_id)
+        elif source.type == 'group':
+            return SourceGroup(source.group_id, source.user_id)
+        elif source.type == 'room':
+            return SourceRoom(source.room_id, source.user_id)
+        else:
+            return None
