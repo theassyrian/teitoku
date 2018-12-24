@@ -15,12 +15,19 @@ class RequestHandler:
         request_handler.handler = handler
         dispatcher.register_handler(request_handler)
 
-    def check_applicable(self, message):
-        return message.content == self.command
+    def check_applicable(self, request):
+        pass
 
     def execute(self, req, res):
+        self.preprocess(req, res)
         self.handler(req, res)
-        res.message.from_gateway = req.message.from_gateway
+        self.post_process(req, res)
+        return
+
+    def preprocess(self, req, res):
+        pass
+
+    def post_process(self, req, res):
+        res.message.gateway = req.message.gateway
         dispatcher = ResponseDispatcher.load()
         dispatcher.parse_response(res)
-        return

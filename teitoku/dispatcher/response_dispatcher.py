@@ -12,7 +12,7 @@ class ResponseDispatcher:
         return cls.instance
 
     def dispatch(self, message):
-        print("Gateway : {}".format(message.from_gateway))
+        print("Gateway : {}".format(message.gateway))
         print("Content : {}".format(message.content))
 
     def lookup_gateway(self, message):
