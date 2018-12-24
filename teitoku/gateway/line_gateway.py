@@ -25,28 +25,28 @@ class LineGateway(Gateway):
         self.line_bot_api = LineBotApi(self.channel_access_token)
         self.webhook_handler = WebhookHandler(self.channel_secret)
         self.parser = WebhookParser(self.channel_secret)
+        bottle.default_app().route(path='/', callback=self.landing)
+        bottle.default_app().route('/{}'.format(webhook_suffix), callback=self.webhook_callback, method="POST")
 
-        @bottle.route('/')
-        def landing():
-            return "Running"
+    def landing(self):
+        return "Running"
 
-        @bottle.post("/{}".format(webhook_suffix))
-        def webhook_callback():
-            signature = bottle.request.headers['X-Line-Signature']
-            body = bottle.request.body.getvalue().decode('utf-8')
-            print('%s' % signature)
-            try:
-                events = self.parser.parse(body, signature)
-                for event in events:
-                    message = self.message_parser.parse(event)
-                    print(message)
-                    if message is not None:
-                        self.dispatcher.dispatch(message)
-            except InvalidSignatureError as e:
-                print(e)
-                bottle.abort(400)
+    def webhook_callback(self):
+        signature = bottle.request.headers['X-Line-Signature']
+        body = bottle.request.body.getvalue().decode('utf-8')
+        print('%s' % signature)
+        try:
+            events = self.parser.parse(body, signature)
+            for event in events:
+                message = self.message_parser.parse(event)
+                print(message)
+                if message is not None:
+                    self.dispatcher.dispatch(message)
+        except InvalidSignatureError as e:
+            print(e)
+            bottle.abort(400)
 
-            return 'OK'
+        return 'OK'
 
     def run(self):
         print("Started line webhook on http://{}:{}/{}".format(
